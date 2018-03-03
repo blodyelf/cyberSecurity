@@ -1,6 +1,6 @@
 import java.lang.Exception;
 
-public WeakPasswordException extends Exception {
+public class WeakPasswordException extends Exception {
     
     public WeakPasswordException() {
         super();

@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
-import java.security.KeyStore;
+import java.security.*;
+import javax.net.ssl.*;
 
 public class Client{
     
@@ -14,10 +15,12 @@ public class Client{
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             
             
+        }catch (Exception e) {
+            throw new IOException(e.toString());
         }
     }
     
-    private SSLSocketFactory createSslSocketFactory() throws IOException {
+   /* private SSLSocketFactory createSslSocketFactory() throws IOException {
         
         try{        
             // load up the key store
@@ -44,7 +47,7 @@ public class Client{
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
-    }
+    }*/
     
     
 }

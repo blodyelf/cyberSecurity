@@ -3,6 +3,11 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.SocketFactory;
 import javax.net.ssl.HttpsURLConnection;
 
+import java.net.*;
+import java.io.*;
+import java.security.*;
+import javax.net.ssl.*;
+
 public class Communication{
     
     public Communication(){
@@ -12,11 +17,11 @@ public class Communication{
     public static void main(String args[]){
         
         Communication comm = new Communication();
-        comm.doSmth();
+        //comm.doSmth();
         
     }
     
-    private void doSmth(){
+    private void doSmth() throws IOException{
         
         String https_url = "https://localhost:443";
         URL url;
@@ -25,12 +30,14 @@ public class Communication{
             url = new URL(https_url);
             HttpURLConnection con = (HttpsURLConnection) url.openConnection();
             
+        }catch (Exception e) {
+            throw new IOException(e.toString());
         }
     }
     
     
     
-    private SSLSocketFactory createSslSocketFactory() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+    /*private SSLSocketFactory createSslSocketFactory() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
         // load up the key store
         String STORETYPE = "JKS";
         String KEYSTORE = "keystore.jks";
@@ -51,6 +58,6 @@ public class Communication{
         sslContext.init(null, null, null); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
 
         return sslContext.getSocketFactory();// (SSLSocketFactory) SSLSocketFactory.getDefault();
-    }
+    }*/
  
 }

@@ -1,4 +1,4 @@
-public UserAccount {
+public class UserAccount {
                    
     // Password and security
     private String ID;
@@ -12,7 +12,11 @@ public UserAccount {
     // create account
     public UserAccount(UserData userData, String password) {
         
-        pass_hash = generatePasswordHash(password);
+        try{
+            pass_hash = new PasswordHash().generatePasswordHash(password);
+        } catch (Exception e) {
+            
+        }
         
         boolean available = false;
         
@@ -33,11 +37,9 @@ public UserAccount {
     // Retrieve from database
     public UserAccount getUserAccount(String firstName, String lastName, String securityNumber, String password) throws IncorrectLoginDetails {
         
-        try {
-            
-        } catch (IncorrectLoginDetails e) {
-            throw e;
-        }
+        throw new IncorrectLoginDetails();
+        
+        //return null;
     }
     
     public boolean checkExistingInDatabase(String s) {
@@ -47,8 +49,9 @@ public UserAccount {
     }
     
     // Save to database 
-    public saveToDatabase(){
+    public void saveToDatabase(){
         
         // Handle this
+        //return null;
     }
 }

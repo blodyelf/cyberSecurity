@@ -1,7 +1,7 @@
 import java.lang.Exception;
 
-public IncorrectLoginDetails extends Exception {
-    public IncorrectPassword(){
+public class IncorrectLoginDetails extends Exception {
+    public IncorrectLoginDetails(){
         super("Incorrect login details");
     }
 }

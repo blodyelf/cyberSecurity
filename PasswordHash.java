@@ -1,11 +1,18 @@
-import 
+import java.net.*;
+import java.io.*;
+import java.security.*;
+import javax.net.ssl.*; 
+import java.security.spec.*;
+import javax.crypto.*;
+import javax.crypto.spec.*;
+import java.math.BigInteger;
 
-public static PasswordHash {
+public class PasswordHash {
     
-    private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
+    private final String ALGORITHM = "PBKDF2WithHmacSHA1";
     
     
-    public static String generatePasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public String generatePasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
         int iterations = (int)(Math.random() * 500 + 750);;
         char[] chars = password.toCharArray();
@@ -17,7 +24,7 @@ public static PasswordHash {
         return iterations + ":" + toHex(salt) + ":" + toHex(hash);
     }
     
-    public static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
         String[] parts = storedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);
@@ -36,7 +43,7 @@ public static PasswordHash {
         return diff == 0;
     }
      
-    private static byte[] getSalt() throws NoSuchAlgorithmException
+    private byte[] getSalt() throws NoSuchAlgorithmException
     {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
@@ -44,7 +51,7 @@ public static PasswordHash {
         return salt;
     }
      
-    private static String toHex(byte[] array) throws NoSuchAlgorithmException
+    private String toHex(byte[] array) throws NoSuchAlgorithmException
     {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
@@ -57,7 +64,7 @@ public static PasswordHash {
         }
     }
     
-    private static byte[] fromHex(String hex) throws NoSuchAlgorithmException
+    private byte[] fromHex(String hex) throws NoSuchAlgorithmException
     {
         byte[] bytes = new byte[hex.length() / 2];
         for(int i = 0; i<bytes.length ;i++)

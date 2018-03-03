@@ -5,8 +5,8 @@ import javax.net.ssl.*;
 
 public class Server{
     
-    private InputStream sslIS;
-    private OutputStream sslOs;
+    private static InputStream sslIS;
+    private static OutputStream sslOS;
     
     public static void main(String args[]) throws IOException {
         
@@ -39,20 +39,24 @@ public class Server{
     }
     
     private static SSLServerSocketFactory makeSSLSocketFactory(String keyAndTrustStoreClasspathPath, char[] passphrase) throws IOException {
-    
+        return null;
     }
     
     public void register(UserData userData, String password) {
         
         try{
             userData.saveToDatabase();
-        } catch (Invalid)
+        } catch (InvalidPersonalDetails e) {
+            //sslOS.write(e.toString());
+            //sslOS.flush();
+            return;
+        }
         
         try {
             checkPassordStrength(password);
         } catch (Exception e){
-            sslOS.write(e.toString());
-            sslOS.flush();
+            //sslOS.write(e.toString());
+            //sslOS.flush();
             return;
         }
         
@@ -60,7 +64,7 @@ public class Server{
         
     }
     
-    private void checkPassordStrength(String pass) throws WeakPasswordException{
+    private void checkPassordStrength(String pass) throws WeakPasswordException, Exception{
         
         if(pass.length() < 8) 
             throw new WeakPasswordException("Password under 8 characters!");
@@ -86,7 +90,7 @@ public class Server{
         if(!digit || !upper || !lower || ! special) {
             
             boolean ok = false;
-            StringBuilder sb = new StringBuider("The password must contain at least:");
+            StringBuilder sb = new StringBuilder("The password must contain at least:");
             
             if(!digit) { 
                 sb.append(" a digit");

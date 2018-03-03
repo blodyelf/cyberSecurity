@@ -1,5 +1,8 @@
 public class Database {
     
+}
+/*public class Database {
+    
     
     public static Connection getConnection() {
 		String user;
@@ -30,4 +33,4 @@ public class Database {
 			System.out.println("Error retrieving connection");
 			return null;
 		}
-}
+}*/

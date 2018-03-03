@@ -1,6 +1,6 @@
 import java.lang.Exception;
 
-public InvalidPersonalDetails extends Exception {
+public class InvalidPersonalDetails extends Exception {
     
     public InvalidPersonalDetails(){
         super("Invalid personal details!");

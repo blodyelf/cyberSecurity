@@ -34,7 +34,7 @@ public class UserData {
         this.over18 = over18;
         this.alreadyExisting = alreadyExisting;
     
-        this.String title = title; 
+        this.title = title; 
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -52,7 +52,7 @@ public class UserData {
     }
     
     // Save data to database
-    public saveToDatabase() throws InvalidPersonalDetails {
+    public void saveToDatabase() throws InvalidPersonalDetails {
         
         if(!validPersonalData()) 
             throw new InvalidPersonalDetails();
@@ -64,6 +64,7 @@ public class UserData {
     public static UserData getUserData() {
         
         // Access database and give user details or throw exception
+        return null;
     }
     
     // This should probably be checked by hand/ by another entity 
