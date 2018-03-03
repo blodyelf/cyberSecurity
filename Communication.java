@@ -11,7 +11,21 @@ public class Communication{
     
     public static void main(String args[]){
         
+        Communication comm = new Communication();
+        comm.doSmth();
         
+    }
+    
+    private void doSmth(){
+        
+        String https_url = "https://localhost:443";
+        URL url;
+        
+        try {
+            url = new URL(https_url);
+            HttpURLConnection con = (HttpsURLConnection) url.openConnection();
+            
+        }
     }
     
     

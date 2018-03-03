@@ -1,5 +1,6 @@
 @echo off
 
-javac Communication.java 
+REM javac Communication.java 
+javac Server.java
 
 pause
