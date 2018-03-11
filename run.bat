@@ -1,5 +1,5 @@
 @echo off
 
-java Communication 
+java Communication
 
 pause

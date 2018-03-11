@@ -10,6 +10,9 @@ import javax.net.ssl.*;
 
 public class Communication{
     
+    private static HTTPSServer server;
+    private static HTTPSClient client;
+    
     public Communication(){
         
     }
@@ -17,47 +20,46 @@ public class Communication{
     public static void main(String args[]){
         
         Communication comm = new Communication();
-        //comm.doSmth();
+        server = new HTTPSServer();
+        client = new HTTPSClient();
         
+        MyRunnable myClient = new MyRunnable(server);
+        MyRunnable myServer = new MyRunnable(client);
+        
+        
+        Thread tServer = new Thread(myServer);
+        tServer.start();
+        
+        Thread tClient = new Thread(myClient);
+        tClient.start();
     }
     
     private void doSmth() throws IOException{
         
-        String https_url = "https://localhost:443";
-        URL url;
-        
-        try {
-            url = new URL(https_url);
-            HttpURLConnection con = (HttpsURLConnection) url.openConnection();
-            
-        }catch (Exception e) {
-            throw new IOException(e.toString());
-        }
+       
     }
     
-    
-    
-    /*private SSLSocketFactory createSslSocketFactory() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
-        // load up the key store
-        String STORETYPE = "JKS";
-        String KEYSTORE = "keystore.jks";
-        String STOREPASSWORD = "storepassword";
-        String KEYPASSWORD = "keypassword";
-
-        KeyStore ks = KeyStore.getInstance(STORETYPE);
-        ks.load(MattermostClient.class.getResourceAsStream(KEYSTORE), STOREPASSWORD.toCharArray());
-
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(ks, KEYPASSWORD.toCharArray());
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-        tmf.init(ks);
-
-        SSLContext sslContext = null;
-        sslContext = SSLContext.getInstance("TLS");
-        //		sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-        sslContext.init(null, null, null); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
-
-        return sslContext.getSocketFactory();// (SSLSocketFactory) SSLSocketFactory.getDefault();
-    }*/
- 
 }
+
+class MyRunnable implements Runnable {
+        private HTTPSServer server;
+        private HTTPSClient client;
+        
+        private boolean clientThread = true;
+        
+        public MyRunnable(HTTPSServer server){
+            this.server = server;
+            clientThread = false;
+        }
+        
+        public MyRunnable(HTTPSClient client){
+            this.client = client;
+        }
+        
+        public void run(){
+            if(clientThread) 
+                client.run();
+            else 
+                server.run();
+        }
+    }
