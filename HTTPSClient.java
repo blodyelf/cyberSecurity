@@ -130,9 +130,10 @@ public class HTTPSClient {
                         break;
                     }
                     
-                    if(line.trim().equals("HTTP/1.1 504\r\n")){
+                    if(line.equals("HTTP/1.1 504\r\n")){
                         System.out.println("Server timed out!");
-                        break;
+                        sslSocket.close();
+                        return;
                     }
                 }
                 
@@ -148,14 +149,20 @@ public class HTTPSClient {
                         
                         if(line.trim().equals("You want to authenticate!")){
                             printWriter.println(getCredentials());
-                            printWriter.println("LUL");
+                            printWriter.println();
                             printWriter.flush();
-                            break;
                         }
                         
-                        if(line.trim().equals("HTTP/1.1 504\r\n")){
+                        if(line.trim().equals("Failed!")) {
+                            printWriter.println(getCredentials());
+                            printWriter.println();
+                            printWriter.flush();
+                        }
+                        
+                        if(line.trim().equals("HTTP/1.1 504")){
                             System.out.println("Server timed out!");
-                            break;
+                            sslSocket.close();
+                            return;
                         }
                     }
                 } else { // Register
@@ -171,16 +178,14 @@ public class HTTPSClient {
                             break;
                         }
                         
-                        if(line.trim().equals("HTTP/1.1 504\r\n")){
+                        if(line.trim().equals("HTTP/1.1 504")){
                             System.out.println("Server timed out!");
-                            break;
+                            sslSocket.close();
+                            return;
                         }
                     }
 
                 }
-                
-                
-                
                 
                 sslSocket.close();
             } catch (Exception ex) {
@@ -243,46 +248,166 @@ public class HTTPSClient {
                     ioe.printStackTrace();
                 }            
             
-                if(username.contains(":|\"") || password.contains(":|\"")){
+                if(username.contains(",|\\s") || password.contains(",|\\s")){
                     valid = false;
-                    System.out.println("Invalid characters used! (\" or :)");
+                    System.out.println("Invalid characters used! (space or ,)");
                 }
             }
             
-            return "Username: \"" + username + "\", Password: \"" + password + "\"";
+            return username + ", " + password;
         }
         
         private String getUserData(){
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             
-            String  username = "", 
-                    password = "";
-            
-            boolean valid = false;
-            
-            while(!valid) {
-                valid = true;
-                System.out.print("Username: ");
+            /*String title, 
+                firstName,
+                middleName,
+                lastName,
+                dateOfBirth,
+                gender,
+                maritalStatus,
+                livingSituation,
+                motherMaidenName,
+                nationality,
+                countryOfBirth,
+                cityOfBirth,
+                previousAddressPostcode,
+                insuranceNumber,
+                mobileNumber;
+            */
+            String[] data = new String[18];
+            while(true) {
+       
                 try{
-                    username = br.readLine().trim();
+                    System.out.print("Title: ");
+                    data[0] = br.readLine().trim();
+                    
+                    System.out.print("First name: ");
+                    data[1] = br.readLine().trim();
+                    
+                    System.out.print("Middle name: ");
+                    data[2] = br.readLine().trim();
+                    
+                    System.out.print("Last name: ");
+                    data[3] = br.readLine().trim();
+                    
+                    System.out.print("Date of birth: ");
+                    data[4] = br.readLine().trim();
+                    
+                    System.out.print("Gender: ");
+                    data[5] = br.readLine().trim();
+                    
+                    System.out.print("Marital status: ");
+                    data[6] = br.readLine().trim();
+                    
+                    System.out.print("Living situation: ");
+                    data[7] = br.readLine().trim();
+                    
+                    System.out.print("Mother maiden name: ");
+                    data[8] = br.readLine().trim();
+                    
+                    System.out.print("Nationality: ");
+                    data[9] = br.readLine().trim();
+                    
+                    System.out.print("Country of birth: ");
+                    data[10] = br.readLine().trim();
+                    
+                    System.out.print("City of birth: ");
+                    data[11] = br.readLine().trim();
+                    
+                    System.out.print("Previous address postcode: ");
+                    data[12] = br.readLine().trim();
+                    
+                    System.out.print("Insurance number: ");
+                    data[13] = br.readLine().trim();
+                    
+                    System.out.print("Mobile number: ");
+                    data[14] = br.readLine().trim();
+                    
+                    System.out.println("Security! ");
+                    
+                    while(true) {
+                        System.out.print("Password: ");
+                        String firstPass =  br.readLine().trim();
+                        
+                        System.out.print("Retype password: ");
+                        data[15] = br.readLine().trim();
+                        
+                        if(firstPass.equals(data[15])) 
+                            break;
+                        
+                        System.out.println("Passwords not mathing!");
+                    }
+                    
+                    System.out.print("Security question: ");
+                    data[16] = br.readLine().trim();
+                           
+                    while(true) {
+                        System.out.print("Security answer: ");
+                        String firstAns = br.readLine().trim();
+                    
+                        System.out.print("Retype security answer: ");
+                        data[17] = br.readLine().trim();
+                        
+                        if(firstAns.equals(data[17])) 
+                            break;
+                        
+                        System.out.println("Answers not mathing!");
+                    }
+                    
                 } catch(IOException ioe) {
                     ioe.printStackTrace();
+                    continue;
+                }
+                            
+                for(String str : data)
+                    if(str.contains(", ")){
+                        System.out.println("Invalid characters used! (,)");
+                        continue;
+                    }
+                    
+                // Show your data
+                System.out.println("Your data:");
+                for(int i = 0; i <= 14; i++)
+                        System.out.println(data[i] + ",");
+                
+                boolean confirm = false;
+                while(true) {
+                    System.out.print("Confirm(yes/no): ");
+                    String confirmStr = null;
+                    try{
+                        confirmStr =  br.readLine().trim();
+                    } catch(IOException ioe) {
+                        ioe.printStackTrace();
+                        continue;
+                    }
+                    
+                    if(confirmStr.equals("yes")) {
+                        confirm = true;
+                        break;
+                    } 
+                    
+                    if(confirmStr.equals("no")) {
+                        confirm = false;
+                        break;
+                    }
                 }
                 
-                System.out.print("Password: ");
-                try{
-                    password = br.readLine().trim();
-                } catch(IOException ioe) {
-                    ioe.printStackTrace();
-                }            
-            
-                if(username.contains(":|\"") || password.contains(":|\"")){
-                    valid = false;
-                    System.out.println("Invalid characters used! (\" or :)");
-                }
+                
+                if(!confirm) 
+                    continue; 
+                else
+                    break;
             }
+            String response = "";
             
-            return "Username: \"" + username + "\", Password: \"" + password + "\"";
+            for(int i = 0; i < 17; i++) {
+                response += data[i] + ", ";
+            }
+            response += data[17];
+            
+            return response;
         }
     }
 }

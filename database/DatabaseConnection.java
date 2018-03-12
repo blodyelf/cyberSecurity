@@ -69,7 +69,7 @@ public class DatabaseConnection {
           
             String sql = "CREATE DATABASE database";
             stmt.executeUpdate(sql);
-            System.out.println("Database created successfully...");
+            System.out.println("Table created successfully...");
         }catch(SQLException se){
             //Handle errors for JDBC
             se.printStackTrace();
@@ -89,7 +89,7 @@ public class DatabaseConnection {
             }catch(SQLException se){
                 se.printStackTrace();
             }//end finally try
-        }//end try
+        }//end try*/
        
     }
     

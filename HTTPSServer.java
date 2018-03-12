@@ -1,5 +1,6 @@
 import data_classes.*;
 import exceptions.*;
+import security.*;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -131,8 +132,8 @@ public class HTTPSServer {
                     }
                 }
                 
-                boolean authenticate = true;
-                // Handle action 
+                String action = ""; 
+                // acknowledge action 
                 while(true){
                     line = bufferedReader.readLine();
                     
@@ -140,6 +141,7 @@ public class HTTPSServer {
                         System.out.println("Client-Inut : "+line);
                     
                     if(line.trim().equals("authenticate")){
+                        action = "authenticate";
                         printWriter.println("You want to authenticate!");
                         printWriter.println();
                         printWriter.flush();
@@ -147,15 +149,56 @@ public class HTTPSServer {
                     }
                     
                     if(line.trim().equals("register")){
+                        action = "register";
                         printWriter.println("You want to register!");
                         printWriter.println();
                         printWriter.flush();
-                        authenticate = false;
+                        
+                        break;
+                    }
+                    
+                    if(line.trim().equals("recover")){
+                        action = "recover";
+                        printWriter.println("You want to recover your account!");
+                        printWriter.println();
+                        printWriter.flush();
                         break;
                     }
                 }
                 
-                if(authenticate) {
+                // Handle action
+                if(action.equals("authenticate")) {
+                    Authenticator auth = new Authenticator();
+                    try{
+                        while(true){
+                            line = bufferedReader.readLine();
+                            
+                            if(!line.trim().isEmpty()) {
+                                System.out.println("Client-Inut : " + line);
+                                
+                                int separator = line.indexOf(", ");
+                                String username = line.substring(0, separator);
+                                String password = line.substring(separator + 2);
+                                
+                                //System.out.println(username + ",|" + password);
+                                if(auth.authenticate(username, password)) {
+                                    
+                                    break;
+                                }
+                                
+                                printWriter.println("Failed!");
+                                printWriter.println();
+                                printWriter.flush();
+                            }
+                        }
+                    } catch (DOSAttemptException dos) {
+                        printWriter.println("HTTP/1.1 504");
+                        printWriter.println();
+                        printWriter.flush();
+                        sslSocket.close();
+                        return;
+                    }
+                } else if (action.equals("register")){
                     while(true){
                         line = bufferedReader.readLine();
                         
@@ -164,7 +207,7 @@ public class HTTPSServer {
                             break;
                         }
                     }
-                } else {
+                } else if(action.equals("recover")) {
                     while(true){
                         line = bufferedReader.readLine();
                         
@@ -176,10 +219,11 @@ public class HTTPSServer {
                 }
                 
                 // Write data
+                printWriter.print("SUCCESS!");
                 printWriter.print("HTTP/1.1 200\r\n");
                 printWriter.flush();
                  
-                sslSocket.close();
+                //sslSocket.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -187,11 +231,12 @@ public class HTTPSServer {
     }
 
     
-    public void register(UserData userData, String password) {
+    public void register(UserData userData, String password, String secretQuestion, String secretAnswer) {
         
+        UserAccount userAccount = new UserAccount(userData, password, secretQuestion, secretAnswer);
         try{
-            userData.saveToDatabase();
-        } catch (InvalidPersonalDetails e) {
+            userAccount.saveToDatabase();
+        } catch (Exception e) {
             //sslOS.write(e.toString());
             //sslOS.flush();
             return;
@@ -260,9 +305,7 @@ public class HTTPSServer {
             sb.append(".");
             
             throw new WeakPasswordException(sb.toString());
-        }
-        
-        
+        }   
     }
     
     private void savePassword(String password){
