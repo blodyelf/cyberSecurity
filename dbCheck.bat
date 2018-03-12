@@ -2,6 +2,6 @@
 
 set classpath=.;libraries\*
 
-java -cp %classpath% Communication
+java -cp %classpath% database/DBCheck
 
 pause

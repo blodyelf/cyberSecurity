@@ -3,10 +3,7 @@ package database;
 import java.sql.*;
 import org.sqlite.*;
 
-/**
- *
- * @author sqlitetutorial.net
- */
+
 public class DatabaseConnection {
      
     static final String JDBC_DRIVER = "org.sqlite.JDBC";  
@@ -21,61 +18,111 @@ public class DatabaseConnection {
      * @param args the command line arguments
      */
     public DatabaseConnection(){
-        /*conn = null;
+        conn = null;
+        Statement stmt = null;
         try {
             try{
+                //Class.forName("org.sqlite.JDBC");
                 DriverManager.registerDriver(new JDBC());
             } catch(Exception ex){
                 ex.printStackTrace();
             }
-            
-            // db parameters
-            String url = "jdbc:sqlite:database/database.db";
+
             // create a connection to the database
-            conn = DriverManager.getConnection(url);
+            //System.out.println("Connecting to database...");
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            //System.out.println("Creating database...");
             
-            System.out.println("Connection to SQLite has been established.");
-            
+            //System.out.println("Connection to SQLite has been established.");
+        
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }*/
+        } 
     }
     
     // Create database
     public static void main(String[] args) {
-       //DatabaseConnection db = new DatabaseConnection();
-       
+   
         Connection conn = null;
         Statement stmt = null;
+        String sql;
         try{
-            //STEP 2: Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-
-            //STEP 3: Open a connection
+            //Open a connection
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
-            //STEP 4: Execute a query
             System.out.println("Creating database...");
+            
+            // USER_AUTHENTICATION TABLE
+            // Dropping old user_authentication table
             stmt = conn.createStatement();
-          
-            String sql = "CREATE DATABASE database";
+            sql = "DROP TABLE user_authentication;";
+            stmt.executeUpdate(sql);
+            
+            // Creating new user_authentication table
+            stmt = conn.createStatement();
+            sql = 
+                "CREATE TABLE user_authentication( " +
+                   "id INT PRIMARY KEY, " +
+                   "pass_hash TEXT, " +
+                   "secretQuestion TEXT, " +
+                   "answer_hash TEXT " +
+                ");";
+            stmt.executeUpdate(sql);
+            System.out.println("Table created successfully...");
+            
+            // USER_DATA TABLE
+            // Dropping old user_data table
+            stmt = conn.createStatement();
+            sql = "DROP TABLE user_data;";
+            stmt.executeUpdate(sql);
+            
+            // Creating new user_data table
+            stmt = conn.createStatement();
+            sql = 
+                "CREATE TABLE user_data( " +
+                   "id INT, " +
+                   "title TEXT, " +
+                   "firstName TEXT, " +
+                   "middleName TEXT, " +
+                   "lastName TEXT, " +
+                   "dateOfBirth TEXT, " +
+                   "gender TEXT, " +
+                   "maritalStatus TEXT, " +
+                   "livingSituation TEXT, " +
+                   "motherMaidenName TEXT, " +
+                   "nationality TEXT, " +
+                   "countryOfBirth TEXT, " +
+                   "cityOfBirth TEXT, " +
+                   "previousAddressPostcode TEXT, " +
+                   "insuranceNumber TEXT, " +
+                   "mobileNumber TEXT, " +
+                   "residentUK TEXT, " +
+                   "over18 TEXT, " +
+                   "verified BOOL, " +
+                   "FOREIGN KEY (id) REFERENCES user_authentication(id) " +
+                ");";
+            stmt.executeUpdate(sql);
+            System.out.println("Table created successfully...");
+            
+            // LOGS_AUTHENTICATION TABLE
+            // Dropping old logs_authentication table
+            stmt = conn.createStatement();
+            sql = "DROP TABLE logs_authentication;";
+            stmt.executeUpdate(sql);
+            
+            // Creating new logs_authentication table
+            stmt = conn.createStatement();
+            sql = 
+                "CREATE TABLE logs_authentication( " +
+                   "id INT PRIMARY KEY, " +
+                   "text TEXT, " +
+                   "date TEXT " +
+                ");";
             stmt.executeUpdate(sql);
             System.out.println("Table created successfully...");
         }catch(SQLException se){
             //Handle errors for JDBC
             se.printStackTrace();
-        }catch(Exception e){
-            //Handle errors for Class.forName
-            e.printStackTrace();
         }finally{
             //finally block used to close resources
             try{

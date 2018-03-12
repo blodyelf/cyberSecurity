@@ -22,13 +22,10 @@ public class Authenticator {
         
         if(tries++ >= 2) 
             throw new DOSAttemptException();
-        
-        if(ID == "adrian" && password == "pass") return true;
-        if(password != "pass") return false;
-        
+           
         String storedPassword = "";
         
-        String sql = "SELECT passwordHash FROM user_authentication " + 
+        String sql = "SELECT pass_hash FROM user_authentication " + 
                      "WHERE ID = ?";
  
         try {
@@ -37,7 +34,7 @@ public class Authenticator {
             ResultSet rs = pstmt.executeQuery();
             
             while(rs.next()) {
-                storedPassword = rs.getString("passwordHash");
+                storedPassword = rs.getString("pass_hash");
                 break;
             }
             

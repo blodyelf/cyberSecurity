@@ -167,7 +167,7 @@ public class HTTPSServer {
                 }
                 
                 // Handle action
-                if(action.equals("authenticate")) {
+                if(action.equals("authenticate")) { // AUTHENTICATION
                     Authenticator auth = new Authenticator();
                     try{
                         while(true){
@@ -198,16 +198,17 @@ public class HTTPSServer {
                         sslSocket.close();
                         return;
                     }
-                } else if (action.equals("register")){
+                } else if (action.equals("register")){ // REGISTER
                     while(true){
                         line = bufferedReader.readLine();
                         
                         if(!line.trim().isEmpty()) {
                             System.out.println("Client-Inut : "+line);
+                            register(line);
                             break;
                         }
                     }
-                } else if(action.equals("recover")) {
+                } else if(action.equals("recover")) { // RECOVERY
                     while(true){
                         line = bufferedReader.readLine();
                         
@@ -228,33 +229,48 @@ public class HTTPSServer {
                 ex.printStackTrace();
             }
         }
+        
+        public void register(String str) {
+            String[] words = str.split(", ");
+            int i = 0;
+            for(String w : words) {
+                System.out.println(i++ + ": " + w);
+            }
+            
+            String[] data = new String[17];
+            for(i = 0; i < 17; i++){
+                data[i] = words[i];
+            }
+            
+            register(new UserData(data), words[17], words[18], words[19]);
+        }
+        
+        public void register(UserData userData, String password, String secretQuestion, String secretAnswer) {
+            if(userData == null) {
+                System.out.println("Error");
+                return;
+            }
+            
+            try {
+                checkPasswordStrength(password);
+            } catch (Exception e){
+                e.printStackTrace();
+                //sslOS.write(e.toString());
+                //sslOS.flush();
+                return;
+            }  
+            
+            UserAccount userAccount = new UserAccount(userData, password, secretQuestion, secretAnswer);
+            
+            if(userAccount == null) {
+                System.out.println("Error");
+                return;
+            }
+        }
     }
 
     
-    public void register(UserData userData, String password, String secretQuestion, String secretAnswer) {
-        
-        UserAccount userAccount = new UserAccount(userData, password, secretQuestion, secretAnswer);
-        try{
-            userAccount.saveToDatabase();
-        } catch (Exception e) {
-            //sslOS.write(e.toString());
-            //sslOS.flush();
-            return;
-        }
-        
-        try {
-            checkPassordStrength(password);
-        } catch (Exception e){
-            //sslOS.write(e.toString());
-            //sslOS.flush();
-            return;
-        }
-        
-        
-        
-    }
-    
-    private void checkPassordStrength(String pass) throws WeakPasswordException, Exception{
+    public static void checkPasswordStrength(String pass) throws WeakPasswordException, Exception{
         
         if(pass.length() < 8) 
             throw new WeakPasswordException("Password under 8 characters!");

@@ -16,6 +16,8 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+
+import exceptions.*;
  
 public class HTTPSClient {
     private String host = "127.0.0.1";
@@ -276,7 +278,7 @@ public class HTTPSClient {
                 insuranceNumber,
                 mobileNumber;
             */
-            String[] data = new String[18];
+            String[] data = new String[20];
             while(true) {
        
                 try{
@@ -325,32 +327,53 @@ public class HTTPSClient {
                     System.out.print("Mobile number: ");
                     data[14] = br.readLine().trim();
                     
+                    System.out.print("Are you a resident of the UK?: ");
+                    data[15] = br.readLine().trim();
+                    
+                    System.out.print("Are you over 18?: ");
+                    data[16] = br.readLine().trim();
+                    
                     System.out.println("Security! ");
                     
                     while(true) {
                         System.out.print("Password: ");
                         String firstPass =  br.readLine().trim();
                         
-                        System.out.print("Retype password: ");
-                        data[15] = br.readLine().trim();
+                        try{
+                            HTTPSServer.checkPasswordStrength(firstPass);
+                        } catch (WeakPasswordException wp) {
+                            System.out.println(wp.getMessage());
+                            continue;
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                            continue;
+                        }
                         
-                        if(firstPass.equals(data[15])) 
+                        System.out.print("Retype password: ");
+                        data[17] = br.readLine().trim();
+                        
+                        if(firstPass.equals(data[17])) 
                             break;
                         
                         System.out.println("Passwords not mathing!");
                     }
                     
                     System.out.print("Security question: ");
-                    data[16] = br.readLine().trim();
+                    data[18] = br.readLine().trim();
                            
                     while(true) {
                         System.out.print("Security answer: ");
                         String firstAns = br.readLine().trim();
-                    
-                        System.out.print("Retype security answer: ");
-                        data[17] = br.readLine().trim();
                         
-                        if(firstAns.equals(data[17])) 
+                        if(firstAns.equals("")){
+                            System.out.print("Please enter a security answer!");
+                            continue;
+                        }
+                        
+                        System.out.print("Retype security answer: ");
+                        data[19] = br.readLine().trim();
+                        
+                        if(firstAns.equals(data[19])) 
                             break;
                         
                         System.out.println("Answers not mathing!");
@@ -369,7 +392,7 @@ public class HTTPSClient {
                     
                 // Show your data
                 System.out.println("Your data:");
-                for(int i = 0; i <= 14; i++)
+                for(int i = 0; i < 17; i++)
                         System.out.println(data[i] + ",");
                 
                 boolean confirm = false;
@@ -402,10 +425,10 @@ public class HTTPSClient {
             }
             String response = "";
             
-            for(int i = 0; i < 17; i++) {
+            for(int i = 0; i < 19; i++) {
                 response += data[i] + ", ";
             }
-            response += data[17];
+            response += data[19];
             
             return response;
         }
